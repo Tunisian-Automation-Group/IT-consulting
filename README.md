@@ -12,5 +12,5 @@ The page contains no invented clients, reviews, case studies, certifications or 
 ## Before going live
 
 - Add street addresses in the Contact section and the legal details (registered office, commercial register number, managing director, VAT ID) required for the German Impressum.
-- Wire the contact form submit handler (bottom of `index.html`) to your CRM or form endpoint.
+- Contact form: submissions go to Web3Forms. Paste the access key (sent by web3forms.com to the receiving inbox) into the `data-key` attribute of the form in `index.html`.
 - Point the EN / FR / DE switcher at translated pages and fill the legal links (Impressum, privacy, whistleblowing).

@@ -232,6 +232,8 @@ textarea{min-height:110px;resize:vertical}
 .form-foot small{color:var(--ink-muted);font-size:.8rem;max-width:40ch}
 .form-ok{display:grid;gap:6px;padding:18px 0;border-top:1px solid var(--ink-text)}
 .form-ok strong{font-family:"Outfit",sans-serif;font-weight:400;font-size:1.05rem}
+.form-err{border-top-color:#E08A8A}
+.btn[disabled]{opacity:.6;cursor:default}
 @media (max-width:860px){.contact-grid{grid-template-columns:1fr}}
 @media (max-width:560px){.row{grid-template-columns:1fr}}
 
@@ -534,7 +536,9 @@ html.motion .reveal:not(.in){opacity:0;transform:translateY(12px)}
           <div class="office"><span class="time" data-tz="Europe/Berlin">--:--</span><div><span class="city">Germany</span><p>Headquarters · helpdesk, on-site visits and contracts</p></div></div>
         </div>
       </div>
-      <form id="contact-form" class="reveal" novalidate>
+      <!-- Web3Forms: paste the access key for yassinedkhailii@gmail.com into data-key below -->
+      <form id="contact-form" class="reveal" novalidate data-key="3a8894a4-8681-4ad2-b88c-78b9f244af23">
+        <input type="checkbox" name="botcheck" id="f-botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0">
         <div class="row">
           <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" type="text" autocomplete="name" placeholder="Your name" required></div>
           <div class="field"><label for="f-email">Work email</label><input id="f-email" name="email" type="email" autocomplete="email" placeholder="you@company.eu" required></div>
@@ -561,6 +565,10 @@ html.motion .reveal:not(.in){opacity:0;transform:translateY(12px)}
         <div class="form-ok" id="form-ok" hidden role="status">
           <strong>Thank you. Your request is in.</strong>
           <span>A consultant will reply within one business day.</span>
+        </div>
+        <div class="form-ok form-err" id="form-err" hidden role="alert">
+          <strong>Sending failed.</strong>
+          <span>Please try again in a moment, or email us directly.</span>
         </div>
       </form>
     </div>
@@ -637,15 +645,34 @@ html.motion .reveal:not(.in){opacity:0;transform:translateY(12px)}
   function clocks(){document.querySelectorAll('[data-tz]').forEach(function(el){el.textContent=fmt(el.getAttribute('data-tz'));});}
   clocks();setInterval(clocks,30000);
 
-  /* Contact form: wire the submit handler to your endpoint (CRM, form service or mail API) */
+  /* Contact form: submissions go to Web3Forms, which forwards them to the inbox linked to the access key */
   var form=document.getElementById('contact-form');
+  var okBox=document.getElementById('form-ok'),errBox=document.getElementById('form-err'),submitBtn=document.getElementById('f-submit');
   form.addEventListener('submit',function(e){
     e.preventDefault();
     var firstBad=null;
     ['f-name','f-email'].forEach(function(id){var f=document.getElementById(id);var valid=f.checkValidity();f.classList.toggle('invalid',!valid);if(!valid&&!firstBad)firstBad=f;});
     if(firstBad){firstBad.focus();return;}
-    document.getElementById('form-ok').hidden=false;
-    document.getElementById('f-submit').disabled=true;
+    if(document.getElementById('f-botcheck').checked)return;
+    okBox.hidden=true;errBox.hidden=true;
+    submitBtn.disabled=true;var label=submitBtn.textContent;submitBtn.textContent='Sending…';
+    var payload={
+      access_key:form.getAttribute('data-key'),
+      subject:'New request from strativa-it.com',
+      from_name:'Strativa website',
+      name:document.getElementById('f-name').value.trim(),
+      email:document.getElementById('f-email').value.trim(),
+      company:document.getElementById('f-company').value.trim(),
+      need:document.getElementById('f-need').value,
+      message:document.getElementById('f-msg').value.trim()
+    };
+    fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)})
+      .then(function(r){return r.json().then(function(d){return {ok:r.ok&&d.success,data:d};});})
+      .then(function(res){
+        if(res.ok){okBox.hidden=false;form.reset();submitBtn.textContent=label;}
+        else{errBox.hidden=false;submitBtn.disabled=false;submitBtn.textContent=label;}
+      })
+      .catch(function(){errBox.hidden=false;submitBtn.disabled=false;submitBtn.textContent=label;});
   });
 })();
 </script>
