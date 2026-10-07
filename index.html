@@ -142,7 +142,7 @@ p{margin:0}
 .trust{border-block:1px solid var(--line);padding-block:22px}
 .trust-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px 36px;justify-content:space-between}
 .sectors{display:flex;flex-wrap:wrap;gap:8px 32px;font-family:"Outfit",sans-serif;font-weight:300;font-size:1rem;color:var(--muted)}
-.badges{display:flex;flex-wrap:wrap;gap:8px 20px}
+.badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 28px;margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
 .badge{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text);font-weight:400}
 
 /* ---------- Facts ---------- */
@@ -336,10 +336,12 @@ html.motion .reveal:not(.in){opacity:0;transform:translateY(12px)}
 
   <!-- TRUST STRIP -->
   <section class="trust" aria-label="Sectors and principles">
-    <div class="wrap trust-row">
-      <span class="cap">Who we work with</span>
-      <div class="sectors">
-        <span>Law firms</span><span>Medical practices</span><span>Architects &amp; engineers</span><span>Manufacturing</span><span>Retail</span><span>Agencies &amp; consultancies</span>
+    <div class="wrap">
+      <div class="trust-row">
+        <span class="cap">Who we work with</span>
+        <div class="sectors">
+          <span>Law firms</span><span>Medical practices</span><span>Architects &amp; engineers</span><span>Manufacturing</span><span>Retail</span><span>Agencies &amp; consultancies</span>
+        </div>
       </div>
       <div class="badges">
         <span class="badge">Microsoft 365</span><span class="badge">Google Workspace</span><span class="badge">GDPR</span>
